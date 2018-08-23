@@ -17,7 +17,7 @@ class Record(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=True)
     cost = db.Column(db.Integer, nullable=True)
-
+    check = db.Column(db.Boolean, nullable=True)
 
 # views
 @app.route("/")
@@ -25,17 +25,15 @@ def index():
     return render_template('index.html')
 
 
-@app.route("/name/")
-def name():
-    return "Hello Frank"
-
+def str2bool(v):
+  return v in ("true")
 
 @app.route("/record", methods=['POST'])
 def add_record():
     req_data = request.form
     name = req_data['name']
     cost = req_data['cost']
-    record = Record(name='breakfast', cost=70)
+    record = Record(name = name, cost = cost)
     db.session.add(record)
     db.session.commit()
     return 'Create Succeeded', 200
@@ -48,10 +46,12 @@ def get_records():
         {
             'id': record.id,
             'name': record.name,
-            'cost': record.cost
+            'cost': record.cost,
+            'check':record.check 
         }
         for record in records
     ]
+    print(records_data)
     return jsonify(records_data), 200
 
 
@@ -70,8 +70,11 @@ def get_record(record_id):
 def update_record(record_id):
     req_data = request.form
     record = Record.query.filter_by(id=record_id).first()
-    record.name = req_data['name']
-    record.cost = req_data['cost']
+    if 'check' in req_data:
+        record.check =str2bool(req_data['check'])
+    else:     
+        record.name = req_data['name']
+        record.cost = req_data['cost']
     db.session.add(record)
     db.session.commit()
     return 'Update Succeeded', 200
