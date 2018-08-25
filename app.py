@@ -1,11 +1,11 @@
 from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-
+import os
 
 # initialize
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('postgres://fpcptzbrqressv:209f2ef12f975eaa73b97d5f6bf0e1edadbe2eefcf704990a3f02b1452b380d7@ec2-54-235-160-57.compute-1.amazonaws.com:5432/d38c6otikvuskm')
 app.config.setdefault('SQLALCHEMY_TRACK_MODIFICATIONS', True)
 
 db = SQLAlchemy(app)
